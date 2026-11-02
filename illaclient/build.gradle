@@ -28,6 +28,8 @@ dependencies {
     runtime project(':engine-libgdx')
     compile project(':engine-nifty')
     compile project(':nifty-controls')
+    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.13.1'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl3', version: '1.13.1'
     runtime project(':nifty-style')
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
