@@ -17,6 +17,7 @@ import com.install4j.gradle.Install4jTask
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
@@ -27,7 +28,7 @@ def hasInstall4jDir = project.hasProperty('install4jDir')
 def hasInstall4jTargetDir = project.hasProperty('install4jTargetDir')
 
 archivesBaseName = 'illarion_download'
-mainClassName = 'illarion.download.Application'
+mainClassName = 'illarion.download.IllarionLauncher'
 
 dependencies {
     compile project(':common')
@@ -43,24 +44,26 @@ dependencies {
     compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
     compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
     compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '1.13.1'
+    compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl3', version: '1.13.1'
+    runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '1.13.1', classifier: 'natives-desktop'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes \
-                 'Main-Class': 'illarion.download.gui.GuiApplication', \
-                 'JavaFX-Feature-Proxy': 'None', \
-                 'Permissions': 'all-permissions', \
-                 'Codebase': 'illarion.org', \
-                 'Application-Name': 'Illarion Launcher', \
-                 'Application-Library-Allowable-Codebase': 'illarion.org', \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'), \
-                 'Built-By': System.getProperty('user.name'), \
-                 'Built-JDK': System.getProperty('java.version'), \
-                 'Implementation-Title': 'Illarion Launcher', \
-                 'Implementation-Vendor': 'Illarion e.V.',\
-                  'Implementation-Version': project.ext.fullVersion
+        attributes = [
+            'Main-Class'           : 'illarion.download.IllarionLauncher',
+            'Permissions'          : 'all-permissions',
+            'Codebase'             : 'illarion.org',
+            'Trusted-Library'      : true,
+            'Built-Date'           : new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+            'Built-By'             : System.getProperty('user.name'),
+            'Built-JDK'            : System.getProperty('java.version'),
+            'Implementation-Title' : 'Illarion Launcher',
+            'Implementation-Vendor': 'Illarion e.V.',
+            'Implementation-Version': project.ext.fullVersion
+        ]
     }
 }
 
@@ -75,6 +78,7 @@ if (hasInstall4jTargetDir) {
     publishDownloaderBundle.dependsOn {
         createInstall4j
     }
+    publishDownloaderBundle.dependsOn { createInstall4j }
 }
 
 startScripts.dependsOn {
